@@ -1,0 +1,23 @@
+# Terraform state
+*.tfstate
+*.tfstate.*
+
+# Terraform working dirs
+**/.terraform/
+.terraform.tfstate.lock.info
+crash.log
+crash.*.log
+*.tfplan
+
+# Terragrunt cache
+**/.terragrunt-cache/
+
+# Logs
+*.log
+
+# OS / Editor junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
