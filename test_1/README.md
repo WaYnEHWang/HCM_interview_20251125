@@ -45,7 +45,7 @@ project
          ├─ outputs.tf
          ├─ variables.tf
          └─ versions.tf
-
+```
 
 
 ## 2. 部署前置需求（工具、權限、AWS 設定）
@@ -59,10 +59,11 @@ project
     AWS CLI
 
     安裝完成後，確認指令可用：
+```text
     terraform -version
     terragrunt --version
     aws --version
-
+```
 2.2 AWS 憑證與權限
 
     執行 IaC 的 AWS 身分（IAM User 或 Role）需要具備權限：
@@ -73,11 +74,13 @@ project
     SNS：建立 Topic / Subscription
 
     在本機設定 AWS CLI 憑證：
+    ```text
     aws configure
+    ```
     # 輸入 Access Key ID
     # 輸入 Secret Access Key
-    # Default region name: 建議 ap-northeast-1
-    # Default output format: 可留空或輸入 json
+    # Default region name: 建議ap-northeast-1
+    # Default output format: 可留空或輸入json
 
 ## 3. 建立 S3 Bucket 與 DynamoDB Table（Terraform backend）
 
@@ -164,8 +167,10 @@ project
 
     以下以 dev 環境為例，其餘環境（uat / prod）類似。
     6.1 初始化（Init）
+    ```text
     cd test_1/terraform/live/dev/docker-logs
     terragrunt init -reconfigure
+    ```
 
     此步驟會：
         初始化Terraform backend（使用第3步建立的S3 + DynamoDB）
@@ -175,7 +180,9 @@ project
         AWS CLI憑證與權限是否足夠
 
     6.2 預覽變更（Plan）
+    ```text
     terragrunt plan
+    ```
 
     預期會顯示即將建立的資源：
     CloudWatch Log Group
@@ -186,7 +193,9 @@ project
     SNS Topic + Email Subscription
 
     6.3 實際部署（Apply）
+    ```text
     terragrunt apply
+    ```
     # 出現提示時輸入 yes
 
     部署成功後，可在 AWS Console 驗證：
