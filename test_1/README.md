@@ -77,10 +77,10 @@ aws --version
 ```text
 aws configure
 ```
-輸入 Access Key ID
-輸入 Secret Access Key
-Default region name: 建議ap-northeast-1
-Default output format: 可留空或輸入json
+- **輸入 Access Key ID**
+- **輸入 Secret Access Key**
+- **Default region name: 建議ap-northeast-1**
+- **Default output format: 可留空或輸入json**
 
 ## 3. 建立 S3 Bucket 與 DynamoDB Table（Terraform backend）
 
@@ -159,9 +159,9 @@ Terraform 會建立：
 2. 點選對應的 Topic（例如：docker-logs-alarm-dev-hcm-api）
 3. 切換到 Subscriptions 分頁
 4. 確認：
-    Endpoint = 設定的 email
-    Protocol = email
-    Status = Confirmed
+    - **Endpoint = 設定的 email**
+    - **Protocol = email**
+    - **Status = Confirmed**
 
 ## 6. 如何在本機執行部署
 
@@ -185,12 +185,12 @@ terragrunt plan
 ```
 
 預期會顯示即將建立的資源：
-CloudWatch Log Group
-IAM Role / Policy / Attachment
-CloudWatch Log Metric Filter
-CloudWatch Metric Alarm
-CloudWatch Dashboard
-SNS Topic + Email Subscription
+- **CloudWatch Log Group**
+- **IAM Role / Policy / Attachment**
+- **CloudWatch Log Metric Filter**
+- **CloudWatch Metric Alarm**
+- **CloudWatch Dashboard**
+- **SNS Topic + Email Subscription**
 
 6.3 實際部署（Apply）
 ```text
