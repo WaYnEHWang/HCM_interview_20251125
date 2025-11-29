@@ -144,8 +144,8 @@ terraform.required_version: 可以設定版本
 ## 5. 如何驗證SNS郵件
 
 Terraform 會建立：
-    - **SNS Topic：aws_sns_topic.alarm_topic**
-    - **SNS Subscription：aws_sns_topic_subscription.alarm_email**
+- **SNS Topic：aws_sns_topic.alarm_topic**
+- **SNS Subscription：aws_sns_topic_subscription.alarm_email**
 建立後，SNS 會自動寄出一封 Subscription Confirmation 郵件到 env.hcl 裡設定的 alarm_email。
 
 驗證步驟
@@ -173,11 +173,11 @@ terragrunt init -reconfigure
 ```
 
 此步驟會：
-    - **初始化Terraform backend（使用第3步建立的S3 + DynamoDB）**
-    - **下載AWS provider**
+- **初始化Terraform backend（使用第3步建立的S3 + DynamoDB）**
+- **下載AWS provider**
 若出現錯誤，請先確認：
-    - **S3 bucket 與DynamoDB table是否已建立且名稱正確**
-    - **AWS CLI憑證與權限是否足夠**
+- **S3 bucket 與DynamoDB table是否已建立且名稱正確**
+- **AWS CLI憑證與權限是否足夠**
 
 6.2 預覽變更（Plan）
 ```text
