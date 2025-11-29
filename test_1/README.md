@@ -23,7 +23,7 @@
 ## 1. 專案目錄結構
 
 ```text
-project
+test_1
 └─ terraform
    ├─ live
    │  ├─ root.hcl                 # 共用 remote_state & provider 設定
@@ -87,9 +87,9 @@ aws configure
 Terraform 使用 remote backend，需要一個 S3 bucket + DynamoDB table 來存放與鎖定 state。
 
 預設名稱可改，但須與程式碼一致，若你修改名稱，請在terraform/live/root.hcl 裡一起更新）：
-S3 Bucket：weihan-tf-state-bucket
-DynamoDB Table：weihan-tf-lock-table
-Region：ap-northeast-1（東京）
+- **S3 Bucket：weihan-tf-state-bucket**
+- **DynamoDB Table：weihan-tf-lock-table**
+- **Region：ap-northeast-1（東京）**
 
 
 3.1 建立 S3 Bucket
@@ -102,7 +102,7 @@ Region：ap-northeast-1（東京）
 
 建議設定：
 勾選：Block all public access
-可開啟 Bucket versioning（方便日後回滾 state）
+可開啟 Bucket versioning（方便日後回滾 state） 
 按 Create bucket
 
 3.2 建立 DynamoDB Table
@@ -123,17 +123,17 @@ Region：ap-northeast-1（東京）
 設定 remote_state 與共用 provider： remote_state.config.bucket/region/dynamodb_table 可換成自己偏好的名稱跟地區
 
 4.2 各環境 env.hcl
-dev 環境：terraform/live/dev/env.hcl
-uat 環境：terraform/live/uat/env.hcl
-prod 環境：terraform/live/prod/env.hcl
+- **dev 環境：terraform/live/dev/env.hcl**
+- **uat 環境：terraform/live/uat/env.hcl**
+- **prod 環境：terraform/live/prod/env.hcl**
 
-locals.alarm_email: 換成要接收告警的郵件
+locals.alarm_email: 換成要接收告警的郵件, 
 locals.log_retention_days: 設定Log保留天數（天）
 
 4.3 各環境 docker-logs/terragrunt.hcl
-dev 環境：terraform/live/dev/docker-logs/terragrunt.hcl
-uat 環境：terraform/live/uat/docker-logs/terragrunt.hcl
-prod 環境：terraform/live/prod/docker-logs/terragrunt.hcl
+- **dev 環境：terraform/live/dev/docker-logs/terragrunt.hcl**
+- **uat 環境：terraform/live/uat/docker-logs/terragrunt.hcl**
+- **prod 環境：terraform/live/prod/docker-logs/terragrunt.hcl**
 
 inputs.service_name: 要監控的 Docker 服務名稱
 
@@ -144,8 +144,8 @@ terraform.required_version: 可以設定版本
 ## 5. 如何驗證SNS郵件
 
 Terraform 會建立：
-    SNS Topic：aws_sns_topic.alarm_topic
-    SNS Subscription：aws_sns_topic_subscription.alarm_email
+    - **SNS Topic：aws_sns_topic.alarm_topic**
+    - **SNS Subscription：aws_sns_topic_subscription.alarm_email**
 建立後，SNS 會自動寄出一封 Subscription Confirmation 郵件到 env.hcl 裡設定的 alarm_email。
 
 驗證步驟
@@ -173,11 +173,11 @@ terragrunt init -reconfigure
 ```
 
 此步驟會：
-    初始化Terraform backend（使用第3步建立的S3 + DynamoDB）
-    下載AWS provider
+    - **初始化Terraform backend（使用第3步建立的S3 + DynamoDB）**
+    - **下載AWS provider**
 若出現錯誤，請先確認：
-    S3 bucket 與DynamoDB table是否已建立且名稱正確
-    AWS CLI憑證與權限是否足夠
+    - **S3 bucket 與DynamoDB table是否已建立且名稱正確**
+    - **AWS CLI憑證與權限是否足夠**
 
 6.2 預覽變更（Plan）
 ```text
