@@ -77,10 +77,10 @@ aws --version
 ```text
 aws configure
 ```
-# 輸入 Access Key ID
-# 輸入 Secret Access Key
-# Default region name: 建議ap-northeast-1
-# Default output format: 可留空或輸入json
+輸入 Access Key ID
+輸入 Secret Access Key
+Default region name: 建議ap-northeast-1
+Default output format: 可留空或輸入json
 
 ## 3. 建立 S3 Bucket 與 DynamoDB Table（Terraform backend）
 
@@ -199,8 +199,8 @@ terragrunt apply
 # 出現提示時輸入 yes
 
 部署成功後，可在 AWS Console 驗證：
-CloudWatch → Log groups：/docker/dev/hcm-api
-CloudWatch → Dashboards：docker-logs-dev-hcm-api
-CloudWatch → Alarms：docker-error-dev-hcm-api
-SNS → Topics / Subscriptions：Topic docker-logs-alarm-dev-hcm-api，email 訂閱狀態為 Confirmed
-IAM → Roles：docker-logs-role-dev-hcm-api（若 create_ec2_iam_role = true）
+- **CloudWatch → Log groups：/docker/dev/hcm-api**
+- **CloudWatch → Dashboards：docker-logs-dev-hcm-api**
+- **CloudWatch → Alarms：docker-error-dev-hcm-api**
+- **SNS → Topics / Subscriptions：Topic docker-logs-alarm-dev-hcm-api，email 訂閱狀態為 Confirmed**
+- **IAM → Roles：docker-logs-role-dev-hcm-api（若 create_ec2_iam_role = true）**
