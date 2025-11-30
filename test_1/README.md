@@ -196,7 +196,7 @@ terragrunt plan
 ```text
 terragrunt apply
 ```
-# 出現提示時輸入 yes
+出現提示時輸入 yes
 
 部署成功後，可在 AWS Console 驗證：
 - **CloudWatch → Log groups：/docker/dev/hcm-api**
