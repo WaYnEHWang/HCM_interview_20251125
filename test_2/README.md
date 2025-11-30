@@ -86,16 +86,17 @@ docker ps
 ```
 若沒錯誤，且顯示「空列表」，代表 Docker 已安裝成功，且目前沒有容器在跑。
 
-## 3. 情境一：實體檔案形式的 log
+## 3. 情境一：實體檔案形式的log
 
-### 3.1 規劃方案（概念）
+### 3.1 規劃方案
 這一種情況是：
-- 你容器裡的程式，會把 log 寫到檔案，例如`/var/log/app/app.log`
+- 你容器裡的程式，會把 log 寫到檔案，例如`/var/log/app/app.log` 
+
 我們要做的是：
 
 1. 用Docker Volume，把容器內的`/var/log/app`掛到主機的`/var/log/myapp`，這樣主機就看得到實體log檔
 2. 在這台主機安裝CloudWatch Agent
-3. 告訴CloudWatch Agent：「請幫我盯`/var/log/myapp/app.log`，有新 log 就送去特定的CloudWatch Log Group」
+3. 告訴CloudWatch Agent：「監視`/var/log/myapp/app.log`，有新log就送去特定的CloudWatch Log Group」
 
 「架構圖」大概是這樣：
 ```bash
@@ -105,7 +106,7 @@ docker ps
 [EC2 Host] /var/log/myapp/app.log --CloudWatch Agent--> [CloudWatch Log Group]
 ```
 
-### 3.2 建置手冊：實體 log 檔案方案
+### 3.2 建置手冊：實體log檔案方案
 步驟 1：在主機建立log目錄
 登入EC2後：
 ```bash
@@ -217,3 +218,93 @@ ERROR something bad
 ...
 ```
 如果有，就代表：Docker → 寫log到檔案 → Volume掛到主機 → CloudWatch Agent送到 CloudWatch」已經成功。
+
+## 4. 情境二：透過docker logs輸出的log（stdout / stderr）
+這一種情況是：
+
+- 應用程式不寫檔案，只把log印到畫面（stdout/stderr）
+- 平常我們會用：
+```bash
+docker logs <container-name>
+```
+來查看 log。
+
+這時我們不用上一個情境的方式，而是改用：
+
+Docker內建的logging driver：`awslogs`
+
+讓Docker直接把stdout/stderr寫進CloudWatch Logs。
+
+4.1 規劃方案
+
+架構：
+```bash
+[App in Container] --印log到stdout/stderr-->
+[Docker Engine] --awslogs logging driver--> [CloudWatch Log Group]
+```
+
+4.2 建置手冊：stdout log 方案
+步驟 1：確認EC2有CloudWatch Logs權限的IAM Role
+
+一樣需要：
+
+- EC2掛載的IAM Role具備log權限
+- 請確認 Role 是否至少有：
+  - logs:CreateLogGroup
+  - logs:CreateLogStream
+  - logs:PutLogEvents
+
+步驟 2：啟動一個使用awslogs logging driver的容器（測試）
+
+在 EC2 上執行：
+```bash
+docker run --rm \
+  --name myapp-stdout-test \
+  --log-driver=awslogs \
+  --log-opt awslogs-region=ap-northeast-1 \
+  --log-opt awslogs-group=/docker/dev/myapp-stdout \
+  --log-opt awslogs-stream=myapp-stdout-test \
+  alpine /bin/sh -c "echo 'INFO hello from docker'; echo 'ERROR something happened'; sleep 5"
+```
+說明：
+
+- `--log-driver=awslogs`告訴Docker：把這個容器的stdout/stderr丟到 CloudWatch Logs。
+- `awslogs-region`：AWS區域（這裡用ap-northeast-1）
+- `awslogs-group`：CloudWatch Log Group名稱（沒有的話會被自動建立）
+- `awslogs-stream`：此容器對應的log stream名稱
+- `alpine ...` 那段指令只是做一個測試：
+  - 印一行 INFO
+  - 印一行 ERROR
+  - 等 5 秒後結束
+
+若你想讓它持續輸出 log，可以改成：
+```bash
+docker run -d \
+  --name myapp-stdout-test \
+  --log-driver=awslogs \
+  --log-opt awslogs-region=ap-northeast-1 \
+  --log-opt awslogs-group=/docker/dev/myapp-stdout \
+  --log-opt awslogs-stream=myapp-stdout-test \
+  alpine /bin/sh -c "while true; do echo 'ERROR from loop'; sleep 10; done"
+  ```
+
+4.3 執行與驗證：stdout log方案
+
+1. 在EC2上查看容器log（確保stdout正常）：
+```bash
+docker logs -f myapp-stdout-test
+```
+應該會看到類似：
+```bash
+INFO hello from docker
+ERROR something happened
+```
+
+2. 到AWS Console → CloudWatch → Log groups：
+  - 找名稱 `/docker/dev/myapp-stdout`
+  - 點進去，看 Log Stream `myapp-stdout-test`
+
+3. 在Log Stream內查看log內容：
+  - 應該會看到你在容器裡`echo`出來的那些文字
+
+如果有，就代表：Docker stdout/stderr → Docker awslogs driver → CloudWatch Logs 已經成功了。
